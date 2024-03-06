@@ -6,16 +6,17 @@
 #include "Unit.h"
 #include "Level.h" // Include Level class for collision detection
 
+class Turret;
 class Projectile
 {
 public:
 	Projectile(SDL_Renderer* renderer, Vector2D setPos, Vector2D setDirectionNormal);
-	void update(float dT, std::vector<std::shared_ptr<Unit>>& listUnits, Level& level); // Include Level reference for collision detection
+	void update(float dT, std::vector<Turret>& listUnits, Level& level, int index); // Include Level reference for collision detection
 	void draw(SDL_Renderer* renderer, int tileSize);
 	bool getCollisionOccurred();
 
 private:
-	void checkCollisions(std::vector<std::shared_ptr<Unit>>& listUnits);
+	void checkCollisions(std::vector<Turret>& listUnits, int index); // Updated to take a vector of Turret references
 
 	Vector2D pos, directionNormal;
 	static const float speed, size, distanceTraveledMax;

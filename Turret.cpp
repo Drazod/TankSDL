@@ -7,7 +7,7 @@ const float Turret::speedAngular = MathAddon::angleDegToRad(180.0f), Turret::wea
 
 
 Turret::Turret(SDL_Renderer* renderer, Vector2D setPos) :
-	pos(setPos), angle(0.0f), timerWeapon(1.0f) {
+	pos(setPos), angle(MathAddon::angleDegToRad(270.0f)), timerWeapon(1.0f) {
 	textureMain = TextureLoader::loadTexture(renderer, "Turret.bmp");
 	textureShadow = TextureLoader::loadTexture(renderer, "Turret Shadow.bmp");
 	mix_ChunkShoot = SoundLoader::loadSound("Turret Shoot.ogg");
@@ -18,7 +18,7 @@ Turret::Turret(SDL_Renderer* renderer, Vector2D setPos) :
 void Turret::update(SDL_Renderer* renderer, float dT, std::vector<std::shared_ptr<Unit>>& listUnits,
 	std::vector<Projectile>& listProjectiles) {
 	//Update timer.
-	timerWeapon.countDown(dT);
+	timerWeapon.countDown(1.0/20.0f);
 
 	//Check if a target has been found but is no longer alive or is out of weapon range.
 	if (auto unitTargetSP = unitTarget.lock()) {
@@ -34,13 +34,21 @@ void Turret::update(SDL_Renderer* renderer, float dT, std::vector<std::shared_pt
 		unitTarget = findEnemyUnit(listUnits);
 
 	//Update the angle and shoot a projectile if needed.
-	if (updateAngle(dT))
+	// if (updateAngle(dT))
 	if(shootEnabled)
 		shootProjectile(renderer, listProjectiles);
 }
 
 void Turret::setAutoShoot(bool value){
 	shootEnabled = value;
+}
+void Turret::rotate(float angle) {
+    this->angle += angle;
+    if (this->angle > 360.0f) {
+        this->angle -= 360.0f;
+    } else if (this->angle < 0.0f) {
+        this->angle += 360.0f;
+    }
 }
 
 bool Turret::updateAngle(float dT) {

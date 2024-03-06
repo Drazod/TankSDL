@@ -1,5 +1,6 @@
 #include "Projectile.h"
 #include "iostream"
+#include "Turret.h"
 
 const float Projectile::speed = 10.0f;
 const float Projectile::size = 0.2f;
@@ -10,7 +11,7 @@ Projectile::Projectile(SDL_Renderer* renderer, Vector2D setPos, Vector2D setDire
     texture = TextureLoader::loadTexture(renderer, "Projectile.bmp");
 }
 
-void Projectile::update(float dT, std::vector<std::shared_ptr<Unit>>& listUnits, Level& level) {
+void Projectile::update(float dT, std::vector<Turret>& listUnits, Level& level, int index) {
     // Move the projectile forward.
     float distanceMove = speed * dT;
     Vector2D newPos = pos + directionNormal * distanceMove;
@@ -34,7 +35,7 @@ void Projectile::update(float dT, std::vector<std::shared_ptr<Unit>>& listUnits,
     if (distanceTraveled >= distanceTraveledMax)
         collisionOccurred = true;
 
-    checkCollisions(listUnits);
+    checkCollisions(listUnits, index);
 }
 
 
@@ -67,14 +68,14 @@ bool Projectile::getCollisionOccurred() {
     return collisionOccurred;
 }
 
-void Projectile::checkCollisions(std::vector<std::shared_ptr<Unit>>& listUnits) {
+void Projectile::checkCollisions(std::vector<Turret>& listUnits,int index) {
     // Check for a collision with any of the units.
     if (!collisionOccurred) {
         // Check if this overlaps any of the enemy units or not.
         for (int count = 0; count < listUnits.size() && !collisionOccurred; count++) {
-            auto& unitSelected = listUnits[count];
-            if (unitSelected != nullptr && unitSelected->checkOverlap(pos, size)) {
-                unitSelected->removeHealth(1);
+            auto& unitSelected = listUnits[index];
+            if (unitSelected.checkOverlap(pos, size)) {
+                // unitSelected->removeHealth(1);
                 collisionOccurred = true;
             }
         }

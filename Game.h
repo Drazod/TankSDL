@@ -41,6 +41,7 @@ private:
     bool turretClicked(int mouseX, int mouseY); // Function declaration for turret click check
     void moveTurretAngle(SDL_Scancode key);     // Function declaration for turret angle movement
     void moveTurret(Turret& turret, Vector2D direction);
+    void rotateTurret(int turretIndex, float angleChange);
 
     int mouseDownStatus = 0;
 
@@ -56,6 +57,7 @@ private:
 
     Timer spawnTimer, roundTimer;
     int spawnUnitCount = 0;
+    int index = -1;
 
     Mix_Chunk* mix_ChunkSpawnUnit = nullptr;
 };

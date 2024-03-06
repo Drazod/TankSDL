@@ -113,10 +113,30 @@ void Game::processEvents(SDL_Renderer* renderer, bool& running) {
                 }
                 break;
             case SDL_SCANCODE_LSHIFT:
+            {
+                index = 1;
                 setAutoShootForTurret(0, true); // Player 1 turret
                 break;
+            }
             case SDL_SCANCODE_RSHIFT:
-                setAutoShootForTurret(1, true); // Player 2 turret
+            {
+                index = 0;
+                setAutoShootForTurret(1, true); // Player 1 turret
+                break;
+            }
+            case SDL_SCANCODE_Q:
+                rotateTurret(0, -Turret::TURRET_ROTATION_SPEED); // Rotate left for turret 0
+                break;
+
+            case SDL_SCANCODE_E:
+                rotateTurret(0, Turret::TURRET_ROTATION_SPEED); // Rotate right for turret 0
+                break;
+            case SDL_SCANCODE_U:
+                rotateTurret(1, -Turret::TURRET_ROTATION_SPEED); // Rotate left for turret 0
+                break;
+
+            case SDL_SCANCODE_O:
+                rotateTurret(1, Turret::TURRET_ROTATION_SPEED); // Rotate right for turret 0
                 break;
             }
             break;
@@ -131,6 +151,12 @@ void Game::processEvents(SDL_Renderer* renderer, bool& running) {
             }
             break;
         }
+    }
+}
+
+void Game::rotateTurret(int turretIndex, float angleChange) {
+    if (turretIndex >= 0 && turretIndex < listTurrets.size()) {
+        listTurrets[turretIndex].rotate(angleChange);
     }
 }
 
@@ -233,7 +259,8 @@ void Game::updateUnits(float dT) {
 void Game::updateProjectiles(float dT) {
     auto it = listProjectiles.begin();
     while (it != listProjectiles.end()) {
-        (*it).update(dT, listUnits, level);
+        (*it).update(dT, listTurrets, level, index);
+
 
         if ((*it).getCollisionOccurred())
             it = listProjectiles.erase(it);

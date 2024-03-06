@@ -21,6 +21,9 @@ public:
 	bool checkIfOnTile(int x, int y);
 	void setAutoShoot(bool value);
 	void rotate(float angle);  // Function to rotate the turret
+	bool checkOverlap(Vector2D posOther, float sizeOther) {
+		return (posOther - pos).magnitude() <= (sizeOther + 0.48f) / 2.0f;
+	}
 
     // New method to get the position of the turret
     Vector2D getPosition() const {
@@ -29,8 +32,9 @@ public:
 	void setPosition(Vector2D newPosition) {
     	pos = newPosition;
 	}
-
-
+	static constexpr float TURRET_ROTATION_SPEED = 0.1f;
+	float angle;
+	
 private:
 	bool updateAngle(float dT);
 	void shootProjectile(SDL_Renderer* renderer, std::vector<Projectile>& listProjectiles);
@@ -40,7 +44,7 @@ private:
 
  // Position of the turret
 	Vector2D pos;
-	float angle;
+
 	static const float speedAngular, weaponRange;
 
 	Timer timerWeapon;
