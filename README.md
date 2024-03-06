@@ -1,6 +1,6 @@
 # TankSDL2
 
-This is a small game project created for [Course Name/Number]. The game is built using C++ and SDL2 libraries.
+This is a small game project created for learning. The game is built using C++ and SDL2 libraries.
 
 ## Installation
 
