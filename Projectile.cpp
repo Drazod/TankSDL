@@ -75,7 +75,8 @@ void Projectile::checkCollisions(std::vector<Turret>& listUnits,int index) {
         for (int count = 0; count < listUnits.size() && !collisionOccurred; count++) {
             auto& unitSelected = listUnits[index];
             if (unitSelected.checkOverlap(pos, size)) {
-                // unitSelected->removeHealth(1);
+                unitSelected.setHurt();
+                unitSelected.removeHealth(2);
                 collisionOccurred = true;
             }
         }

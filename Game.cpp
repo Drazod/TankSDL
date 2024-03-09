@@ -12,7 +12,7 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
         textureOverlay = TextureLoader::loadTexture(renderer, "Overlay.bmp");
 
         //Load the spawn unit sound.
-        mix_ChunkSpawnUnit = SoundLoader::loadSound("Spawn Unit.ogg");
+        // mix_ChunkSpawnUnit = SoundLoader::loadSound("Spawn Unit.ogg");
 
         //Store the current times for the clock.
         auto time1 = std::chrono::system_clock::now();
@@ -228,33 +228,40 @@ void Game::moveTurret(Turret& turret, Vector2D direction) {
 
 
 void Game::update(SDL_Renderer* renderer, float dT) {
-    updateUnits(dT);
-
+    // updateUnits(dT);
+    // for (auto it = listTurrets.begin(); it != listTurrets.end();) {
+    //     if (!it->isAlive()) {
+    //         it = listTurrets.erase(it);
+    //     } else {
+    //         ++it;
+    //     }
+    // }
     for (auto& turretSelected : listTurrets)
         turretSelected.update(renderer, dT, listUnits, listProjectiles);
 
+
     updateProjectiles(dT);
-    updateSpawnUnitsIfRequired(renderer, dT);
+    // updateSpawnUnitsIfRequired(renderer, dT);
 }
 
-void Game::updateUnits(float dT) {
-    auto it = listUnits.begin();
-    while (it != listUnits.end()) {
-        bool increment = true;
+// void Game::updateUnits(float dT) {
+//     auto it = listUnits.begin();
+//     while (it != listUnits.end()) {
+//         bool increment = true;
 
-        if ((*it) != nullptr) {
-            (*it)->update(dT, level, listUnits);
+//         if ((*it) != nullptr) {
+//             (*it)->update(dT, level, listUnits);
 
-            if ((*it)->isAlive() == false) {
-                it = listUnits.erase(it);
-                increment = false;
-            }
-        }
+//             if ((*it)->isAlive() == false) {
+//                 it = listUnits.erase(it);
+//                 increment = false;
+//             }
+//         }
 
-        if (increment)
-            it++;
-    }
-}
+//         if (increment)
+//             it++;
+//     }
+// }
 
 void Game::updateProjectiles(float dT) {
     auto it = listProjectiles.begin();
@@ -269,27 +276,27 @@ void Game::updateProjectiles(float dT) {
     }
 }
 
-void Game::updateSpawnUnitsIfRequired(SDL_Renderer* renderer, float dT) {
-    spawnTimer.countDown(dT);
+// void Game::updateSpawnUnitsIfRequired(SDL_Renderer* renderer, float dT) {
+//     spawnTimer.countDown(dT);
 
-    if (listUnits.empty() && spawnUnitCount == 0) {
-        roundTimer.countDown(dT);
-        if (roundTimer.timeSIsZero()) {
-            spawnUnitCount = 15;
-            roundTimer.resetToMax();
-        }
-    }
+//     if (listUnits.empty() && spawnUnitCount == 0) {
+//         roundTimer.countDown(dT);
+//         if (roundTimer.timeSIsZero()) {
+//             spawnUnitCount = 15;
+//             roundTimer.resetToMax();
+//         }
+//     }
 
-    if (spawnUnitCount > 0 && spawnTimer.timeSIsZero()) {
-        addUnit(renderer, level.getRandomEnemySpawnerLocation());
+//     if (spawnUnitCount > 0 && spawnTimer.timeSIsZero()) {
+//         addUnit(renderer, level.getRandomEnemySpawnerLocation());
 
-        if (mix_ChunkSpawnUnit != nullptr)
-            Mix_PlayChannel(-1, mix_ChunkSpawnUnit, 0);
+//         if (mix_ChunkSpawnUnit != nullptr)
+//             Mix_PlayChannel(-1, mix_ChunkSpawnUnit, 0);
 
-        spawnUnitCount--;
-        spawnTimer.resetToMax();
-    }
-}
+//         spawnUnitCount--;
+//         spawnTimer.resetToMax();
+//     }
+// }
 
 void Game::draw(SDL_Renderer* renderer) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -297,12 +304,13 @@ void Game::draw(SDL_Renderer* renderer) {
 
     level.draw(renderer, tileSize);
 
-    for (auto& unitSelected : listUnits)
-        if (unitSelected != nullptr)
-            unitSelected->draw(renderer, tileSize);
+    // for (auto& unitSelected : listUnits)
+    //     if (unitSelected != nullptr)
+    //         unitSelected->draw(renderer, tileSize);
 
     for (auto& turretSelected : listTurrets)
         turretSelected.draw(renderer, tileSize);
+
 
     for (auto& projectileSelected : listProjectiles)
         projectileSelected.draw(renderer, tileSize);
@@ -317,9 +325,9 @@ void Game::draw(SDL_Renderer* renderer) {
     SDL_RenderPresent(renderer);
 }
 
-void Game::addUnit(SDL_Renderer* renderer, Vector2D posMouse) {
-    listUnits.push_back(std::make_shared<Unit>(renderer, posMouse));
-}
+// void Game::addUnit(SDL_Renderer* renderer, Vector2D posMouse) {
+//     listUnits.push_back(std::make_shared<Unit>(renderer, posMouse));
+// }
 
 void Game::addTurret(SDL_Renderer* renderer, Vector2D posMouse) {
     Vector2D pos((int)posMouse.x + 0.5f, (int)posMouse.y + 0.5f);

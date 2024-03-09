@@ -38,7 +38,7 @@ Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY) :
 void Level::draw(SDL_Renderer* renderer, int tileSize) {
     //Draw the tile's background color.
     // Load the grass texture (assuming you have a function to load textures)
-    SDL_Texture* grassTexture = TextureLoader::loadTexture(renderer, "Tile Empty.bmp");
+    SDL_Texture* grassTexture = TextureLoader::loadTexture(renderer, "Grass.bmp");
 
     // Check if the texture was loaded successfully
     if (grassTexture == nullptr) {

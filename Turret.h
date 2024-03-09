@@ -16,7 +16,7 @@ class Turret
 public:
 	Turret(SDL_Renderer* renderer, Vector2D setPos);
 	void update(SDL_Renderer* renderer, float dT, std::vector<std::shared_ptr<Unit>>& listUnits,
-		std::vector<Projectile>& listProjectiles);
+	std::vector<Projectile>& listProjectiles);
 	void draw(SDL_Renderer* renderer, int tileSize);
 	bool checkIfOnTile(int x, int y);
 	void setAutoShoot(bool value);
@@ -34,7 +34,13 @@ public:
 	}
 	static constexpr float TURRET_ROTATION_SPEED = 0.1f;
 	float angle;
-	
+	void removeHealth(int damage);
+	bool isAlive() const{
+		return (health > 0);
+	}
+	void setHurt();
+	bool isHurt = false;
+
 private:
 	bool updateAngle(float dT);
 	void shootProjectile(SDL_Renderer* renderer, std::vector<Projectile>& listProjectiles);
@@ -56,5 +62,9 @@ private:
 
 	Mix_Chunk* mix_ChunkShoot = nullptr;
 	bool shootEnabled = false;
+	int health = 20;
+	Timer timerJustHurt;
+
+
 };
 

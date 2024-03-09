@@ -1,13 +1,14 @@
 #include "Turret.h"
 
 
+
 const float Turret::speedAngular = MathAddon::angleDegToRad(180.0f), Turret::weaponRange = 5.0f;
 
 
 
 
 Turret::Turret(SDL_Renderer* renderer, Vector2D setPos) :
-	pos(setPos), angle(MathAddon::angleDegToRad(270.0f)), timerWeapon(1.0f) {
+	pos(setPos), angle(MathAddon::angleDegToRad(270.0f)), timerWeapon(1.0f), timerJustHurt(0.25f) {
 	textureMain = TextureLoader::loadTexture(renderer, "Turret.bmp");
 	textureShadow = TextureLoader::loadTexture(renderer, "Turret Shadow.bmp");
 	mix_ChunkShoot = SoundLoader::loadSound("Turret Shoot.ogg");
@@ -18,8 +19,8 @@ Turret::Turret(SDL_Renderer* renderer, Vector2D setPos) :
 void Turret::update(SDL_Renderer* renderer, float dT, std::vector<std::shared_ptr<Unit>>& listUnits,
 	std::vector<Projectile>& listProjectiles) {
 	//Update timer.
+	
 	timerWeapon.countDown(1.0/20.0f);
-
 	//Check if a target has been found but is no longer alive or is out of weapon range.
 	if (auto unitTargetSP = unitTarget.lock()) {
 		if (unitTargetSP->isAlive() == false ||
@@ -37,6 +38,10 @@ void Turret::update(SDL_Renderer* renderer, float dT, std::vector<std::shared_pt
 	// if (updateAngle(dT))
 	if(shootEnabled)
 		shootProjectile(renderer, listProjectiles);
+	timerJustHurt.countDown(dT);
+	if (timerJustHurt.timeSIsZero()) {
+		isHurt = false;  // Turn off the hurt state when timer is zero
+	}
 }
 
 void Turret::setAutoShoot(bool value){
@@ -94,8 +99,17 @@ void Turret::shootProjectile(SDL_Renderer* renderer, std::vector<Projectile>& li
 
 
 void Turret::draw(SDL_Renderer* renderer, int tileSize) {
-	drawTextureWithOffset(renderer, textureShadow, 5, tileSize);
-	drawTextureWithOffset(renderer, textureMain, 0, tileSize);
+    if (isHurt) {
+        SDL_SetTextureColorMod(textureMain, 255, 0, 0);
+    } else {
+        SDL_SetTextureColorMod(textureMain, 255, 255, 255);  // Default white color
+    }
+
+    drawTextureWithOffset(renderer, textureShadow, 5, tileSize);
+    drawTextureWithOffset(renderer, textureMain, 0, tileSize);
+
+    // Reset color modulation after drawing
+    SDL_SetTextureColorMod(textureMain, 255, 255, 255);
 }
 
 
@@ -146,4 +160,17 @@ std::weak_ptr<Unit> Turret::findEnemyUnit(std::vector<std::shared_ptr<Unit>>& li
 	}
 
 	return closestUnit;
+}
+
+void Turret::removeHealth(int damage) {
+	if (damage > 0) {
+		health -= damage;
+		if (health < 0)
+			health = 0;			
+	}
+}
+
+void Turret::setHurt() {
+	isHurt = true;
+	timerJustHurt.resetToMax();  // Reset the timer for hurt state
 }
